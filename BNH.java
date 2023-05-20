@@ -765,12 +765,12 @@ public class BNH {
 			System.out.println("Empty tree");
 			return;
 		}
-		HeapNode pointer=this.first;
-		while (pointer!=null) {
+		HeapNode pointer = this.first;
+		while (pointer != null) {
 			visualizeNode(pointer, 5);
-			pointer=pointer.getNext();
+			pointer = pointer.getNext();
 		}
-		
+
 	}
 
 	/**
@@ -786,37 +786,96 @@ public class BNH {
 
 		// Print the node's value
 		System.out.println(node.getValue());
-		
+
 		// Recursively visualize each child node
 		HeapNode child = node.getLeftmostChild();
 		while (child != null) {
 
-			visualizeNode(child, depth+5);
+			visualizeNode(child, depth + 5);
 			child = child.getNext();
 
 		}
 	}
-	 public void decreaseValue(HeapNode node, int newValue) {
-	        if (newValue > node.getValue()) {
-	            System.out.println("New value is greater than the current value. Value cannot be decreased.");
-	            return;
-	        }
 
-	        node.setValue(newValue);
+	/**
+	 * Finds a node with the given value in the binomial heap.
+	 *
+	 * @param value The value to search for
+	 * @return The node with the given value, or null if not found
+	 */
+	public HeapNode findNodeWithValue(int value) {
+		if (empty()) {
+			return null;
+		}
 
-	        HeapNode currentNode = node;
-	        HeapNode parentNode = currentNode.getPrev();
+		// Iterate through each root tree in the binomial heap
+		HeapNode pointer = this.first;
+		while (pointer != null) {
+			// Recursively search for the node with the given value in the root tree
+			HeapNode result = findNodeWithValueInTree(pointer, value);
+			if (result != null) {
+				return result;
+			}
 
-	        while (parentNode != null && currentNode.getValue() < parentNode.getValue()) {
-	            // Swap the values of the current node and its parent
-	            int temp = currentNode.getValue();
-	            currentNode.setValue(parentNode.getValue());
-	            parentNode.setValue(temp);
+			pointer = pointer.getNext();
+		}
 
-	            // Move up to the parent node
-	            currentNode = parentNode;
-	            parentNode = currentNode.getPrev();
-	        }
-	    }
+		// Node with the given value not found
+		return null;
+	}
+
+	/**
+	 * Recursively searches for a node with the given value in the root tree.
+	 *
+	 * @param node  The current node to search
+	 * @param value The value to search for
+	 * @return The node with the given value, or null if not found
+	 */
+	private HeapNode findNodeWithValueInTree(HeapNode node, int value) {
+		if (node == null) {
+			return null;
+		}
+
+		if (node.getValue() == value) {
+			return node;
+		}
+
+		// Recursively search in each child tree
+		HeapNode child = node.getLeftmostChild();
+		while (child != null) {
+			HeapNode result = findNodeWithValueInTree(child, value);
+			if (result != null) {
+				return result;
+			}
+
+			child = child.getNext();
+		}
+
+		// Node with the given value not found in this tree
+		return null;
+	}
+
+	public void decreaseValue(HeapNode node, int newValue) {
+		if (newValue > node.getValue()) {
+			System.out.println("New value is greater than the current value. Value cannot be decreased.");
+			return;
+		}
+
+		node.setValue(newValue);
+
+		HeapNode currentNode = node;
+		HeapNode parentNode = currentNode.getPrev();
+
+		while (parentNode != null && currentNode.getValue() < parentNode.getValue()) {
+			// Swap the values of the current node and its parent
+			int temp = currentNode.getValue();
+			currentNode.setValue(parentNode.getValue());
+			parentNode.setValue(temp);
+
+			// Move up to the parent node
+			currentNode = parentNode;
+			parentNode = currentNode.getPrev();
+		}
+	}
 
 }

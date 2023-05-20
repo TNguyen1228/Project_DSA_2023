@@ -3,6 +3,8 @@ package version2;
 import java.util.Arrays;
 import java.util.Random;
 
+import version2.BNH.HeapNode;
+
 public class test {
 
 	private static boolean contains(int[] ar, int x) {
@@ -52,11 +54,15 @@ public class test {
 			System.out.format("%d trees: %s\n", h.treesSize().length, Arrays.toString(h.treesSize()));
 			System.out.println(h.toString());
 			h.visualize();
-			h.decreaseValue(h.getLast(), 4);
+			h.insert(10);
 			System.out.println(h.toString());
 			h.visualize();
+			// Decrease the value of a node in the binomial heap
+	        HeapNode nodeToDecrease = h.findNodeWithValue(10); // Find the node with value 10
+	        h.decreaseValue(nodeToDecrease, 5); // Decrease the value to 5
+			h.visualize();
+			
 			h.deleteMin();
-
 			System.out.println("(ii) After 1 deleteMin():");
 			System.out.format("%d trees: %s\n", h.treesSize().length, Arrays.toString(h.treesSize()));
 			System.out.println(h.toString());
