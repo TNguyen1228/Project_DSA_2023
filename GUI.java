@@ -131,10 +131,8 @@ public class GUI extends Application {
 	}
 
 	private void visualize() {
-		StringBuilder visualization = new StringBuilder();
-		bnh.visualize();
-		resultLabel.setText(visualization.toString());
-	}
+		StringBuilder visualization = new StringBuilder(bnh.visualize());
+		JOptionPane.showMessageDialog(null, visualization);
 
 	private void showError(String message) {
 		resultLabel.setText("Error: " + message);
