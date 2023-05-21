@@ -656,7 +656,9 @@ public class BNH {
 		 * @param value new value
 		 */
 		public void setValue(int value) {
-			this.value = value;
+			if (value>=0) {
+				this.value = value;
+			}
 		}
 
 		/**
