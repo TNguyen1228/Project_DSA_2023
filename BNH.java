@@ -1,6 +1,7 @@
 package version2;
 
 public class BNH {
+	private static int COUNT=10;
 	/**
 	 * Size of an empty heap
 	 */
