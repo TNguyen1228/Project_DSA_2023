@@ -656,7 +656,9 @@ public class BNH {
 		 * @param value new value
 		 */
 		public void setValue(int value) {
-			this.value = value;
+			if (value>=0) {
+				this.value = value;
+			}
 		}
 
 		/**
@@ -755,22 +757,22 @@ public class BNH {
 		}
 	}
 
-	// NEW METHOD ADD TO VISUALIZE THE HEAP BUT HAVE A PROBLEM THAT IT DOESN'T PRINT
-	// ENOUGH NODE IN HEAP
 	/**
 	 * Visualizes the binomial tree by printing it out in the console.
 	 */
-	public void visualize() {
-		if (empty()) {
-			System.out.println("Empty tree");
-			return;
-		}
-		HeapNode pointer = this.first;
-		while (pointer != null) {
-			visualizeNode(pointer, 5);
-			pointer = pointer.getNext();
-		}
+	public String visualize() {
+	    if (empty()) {
+	        return "Empty tree";
+	    }
 
+	    StringBuilder visualization = new StringBuilder();
+	    HeapNode pointer = this.first;
+	    while (pointer != null) {
+	        visualizeNode(pointer, 5, visualization);
+	        pointer = pointer.getNext();
+	    }
+
+	    return visualization.toString();
 	}
 
 	/**
@@ -779,22 +781,18 @@ public class BNH {
 	 * @param node  Current node to visualize
 	 * @param depth Depth of the current node in the tree
 	 */
-	private void visualizeNode(HeapNode node, int depth) {
-		for (int i = 0; i < depth; i++) {
-			System.out.print("  ");
-		}
+	private void visualizeNode(HeapNode node, int depth, StringBuilder visualization) {
+	    for (int i = 0; i < depth; i++) {
+	        visualization.append("  ");
+	    }
 
-		// Print the node's value
-		System.out.println(node.getValue());
+	    visualization.append(node.getValue()).append("\n");
 
-		// Recursively visualize each child node
-		HeapNode child = node.getLeftmostChild();
-		while (child != null) {
-
-			visualizeNode(child, depth + 5);
-			child = child.getNext();
-
-		}
+	    HeapNode child = node.getLeftmostChild();
+	    while (child != null) {
+	        visualizeNode(child, depth + 5, visualization);
+	        child = child.getNext();
+	    }
 	}
 
 	/**
@@ -855,27 +853,27 @@ public class BNH {
 		return null;
 	}
 
-	public void decreaseValue(HeapNode node, int newValue) {
-		if (newValue > node.getValue()) {
-			System.out.println("New value is greater than the current value. Value cannot be decreased.");
-			return;
+	public boolean decreaseValue(HeapNode node, int newValue) {
+		if (newValue > node.getValue() || this.empty()) {
+			return false;
 		}
-
+	
 		node.setValue(newValue);
-
+	
 		HeapNode currentNode = node;
 		HeapNode parentNode = currentNode.getPrev();
-
+	
 		while (parentNode != null && currentNode.getValue() < parentNode.getValue()) {
 			// Swap the values of the current node and its parent
 			int temp = currentNode.getValue();
 			currentNode.setValue(parentNode.getValue());
 			parentNode.setValue(temp);
-
+	
 			// Move up to the parent node
 			currentNode = parentNode;
 			parentNode = currentNode.getPrev();
 		}
+		return true;
 	}
 
 }
