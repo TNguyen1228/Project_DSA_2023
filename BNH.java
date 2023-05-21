@@ -853,27 +853,27 @@ public class BNH {
 		return null;
 	}
 
-	public void decreaseValue(HeapNode node, int newValue) {
-		if (newValue > node.getValue()) {
-			System.out.println("New value is greater than the current value. Value cannot be decreased.");
-			return;
+	public boolean decreaseValue(HeapNode node, int newValue) {
+		if (newValue > node.getValue() || this.empty()) {
+			return false;
 		}
-
+	
 		node.setValue(newValue);
-
+	
 		HeapNode currentNode = node;
 		HeapNode parentNode = currentNode.getPrev();
-
+	
 		while (parentNode != null && currentNode.getValue() < parentNode.getValue()) {
 			// Swap the values of the current node and its parent
 			int temp = currentNode.getValue();
 			currentNode.setValue(parentNode.getValue());
 			parentNode.setValue(temp);
-
+	
 			// Move up to the parent node
 			currentNode = parentNode;
 			parentNode = currentNode.getPrev();
 		}
+		return true;
 	}
 
 }

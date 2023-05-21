@@ -106,11 +106,19 @@ public class GUI extends Application {
 		try {
 			int value = Integer.parseInt(valueField.getText());
 			int newValue = Integer.parseInt(newValueField.getText());
+			
+			if (newValue > value) {
+				StringBuilder error = new StringBuilder("New value is greater than the current value. Value cannot be decreased.");
+				JOptionPane.showMessageDialog(null, error);
+				return;
+			}
 			// Call the decreaseValue method of BNH class
-			bnh.decreaseValue(bnh.findNodeWithValue(value), newValue);
+			if (bnh.decreaseValue(bnh.findNodeWithValue(value), newValue)) {
+				resultLabel.setText("Value decreased for node: " + value);
+			}
 			valueField.clear();
 			newValueField.clear();
-			resultLabel.setText("Value decreased for node: " + value);
+
 		} catch (NumberFormatException e) {
 			// TODO: handle exception
 			showError("Invalid input format. Please enter an integer value.");
