@@ -656,7 +656,7 @@ public class BNH {
 		 * @param value new value
 		 */
 		public void setValue(int value) {
-			if (value>=0) {
+			if (value >= 0) {
 				this.value = value;
 			}
 		}
@@ -761,18 +761,18 @@ public class BNH {
 	 * Visualizes the binomial tree by printing it out in the console.
 	 */
 	public String visualize() {
-	    if (empty()) {
-	        return "Empty tree";
-	    }
+		if (empty()) {
+			return "Empty tree";
+		}
 
-	    StringBuilder visualization = new StringBuilder();
-	    HeapNode pointer = this.first;
-	    while (pointer != null) {
-	        visualizeNode(pointer, 5, visualization);
-	        pointer = pointer.getNext();
-	    }
+		StringBuilder visualization = new StringBuilder();
+		HeapNode pointer = this.first;
+		while (pointer != null) {
+			visualizeNode(pointer, 5, visualization);
+			pointer = pointer.getNext();
+		}
 
-	    return visualization.toString();
+		return visualization.toString();
 	}
 
 	/**
@@ -781,18 +781,25 @@ public class BNH {
 	 * @param node  Current node to visualize
 	 * @param depth Depth of the current node in the tree
 	 */
-	private void visualizeNode(HeapNode node, int depth, StringBuilder visualization) {
-	    for (int i = 0; i < depth; i++) {
-	        visualization.append("  ");
-	    }
+	private void visualizeNode(HeapNode node, int space, StringBuilder visualization) {
+		if (node == null) {
+			return;
+		}
+		space += COUNT;
+		visualizeNode(node.leftmostChild, space, visualization);
+		visualization.append("\n");
+		for (int i = COUNT; i < space; i++) {
+			visualization.append(" ");
+		}
 
-	    visualization.append(node.getValue()).append("\n");
+		visualization.append(node.getValue()).append("\n");
 
-	    HeapNode child = node.getLeftmostChild();
-	    while (child != null) {
-	        visualizeNode(child, depth + 5, visualization);
-	        child = child.getNext();
-	    }
+		HeapNode child = node.getLeftmostChild();
+		if (child != null) {
+			for (int i = 1; i <= node.getRank() - 1; i++) {
+				visualizeNode(child.getNext(), space, visualization);
+			}
+		}
 	}
 
 	/**
@@ -857,18 +864,18 @@ public class BNH {
 		if (newValue > node.getValue() || this.empty()) {
 			return false;
 		}
-	
+
 		node.setValue(newValue);
-	
+
 		HeapNode currentNode = node;
 		HeapNode parentNode = currentNode.getPrev();
-	
+
 		while (parentNode != null && currentNode.getValue() < parentNode.getValue()) {
 			// Swap the values of the current node and its parent
 			int temp = currentNode.getValue();
 			currentNode.setValue(parentNode.getValue());
 			parentNode.setValue(temp);
-	
+
 			// Move up to the parent node
 			currentNode = parentNode;
 			parentNode = currentNode.getPrev();
