@@ -37,7 +37,7 @@ public class GUI extends Application {
 
 		// Create buttons
 		Button insertButton = new Button("Insert");
-//        Button deleteButton = new Button("Delete");
+		Button deleteButton = new Button("Delete Min root");
 		Button decreaseButton = new Button("Decrease");
 		Button findButton = new Button("Find");
 		Button visualizeButton = new Button("Visualize");
@@ -47,7 +47,7 @@ public class GUI extends Application {
 
 		// Set button event handlers
 		insertButton.setOnAction(e -> insertNode());
-//        deleteButton.setOnAction(e -> deleteNode());
+		deleteButton.setOnAction(e -> deleteMinRoot());
 		decreaseButton.setOnAction(e -> decreaseValue());
 		findButton.setOnAction(e -> findNode());
 		visualizeButton.setOnAction(e -> visualize());
@@ -64,7 +64,7 @@ public class GUI extends Application {
 		gridPane.add(new Label("New Value:"), 0, 1);
 		gridPane.add(newValueField, 1, 1);
 		gridPane.add(insertButton, 0, 2);
-//      gridPane.add(deleteButton, 1, 2);
+		gridPane.add(deleteButton, 2, 2);
 		gridPane.add(decreaseButton, 0, 3);
 		gridPane.add(findButton, 1, 3);
 		gridPane.add(visualizeButton, 1, 2);
@@ -137,7 +137,16 @@ public class GUI extends Application {
 			showError("Invalid input format. Please enter an integer value.");
 		}
 	}
-
+	private void deleteMinRoot() {
+		// TODO Auto-generated method stub
+		try {
+			bnh.deleteMin();
+			resultLabel.setText("Delete Min successful.");
+		} catch (Exception e) {
+			// TODO: handle exception
+			showError("Invalid input format. Please enter an integer value.");
+		}
+	}
 	private void visualize() {
 		StringBuilder visualization = new StringBuilder(bnh.visualize());
 		JOptionPane.showMessageDialog(null, visualization);
