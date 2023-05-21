@@ -19,6 +19,10 @@ The operations implemented include:
 - findNodeWithValue
 - visualize
 
+#Test case
+
+Three test case with 3 constant size and random value
+
 # Implement User Interface
 
 Using Eclipse IDE Dev:
