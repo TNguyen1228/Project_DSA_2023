@@ -46,7 +46,7 @@ public class GUI extends Application {
 		// Create buttons
 		Button insertButton = new Button("Insert");
 		Button deleteButton = new Button("Delete Min root");
-//		Button decreaseButton = new Button("Decrease");
+		Button mergeButton = new Button("Merge with another heap");
 		Button findButton = new Button("Find");
 		Button visualizeButton = new Button("Visualize");
 		Button findMinButton = new Button("Find Min");
@@ -56,10 +56,10 @@ public class GUI extends Application {
 		// Set button event handlers
 		insertButton.setOnAction(e -> insertNode());
 		deleteButton.setOnAction(e -> deleteMinRoot());
-//		decreaseButton.setOnAction(e -> decreaseValue());
 		findButton.setOnAction(e -> findNode());
 		visualizeButton.setOnAction(e -> visualize());
 		findMinButton.setOnAction(e -> findMinNode());
+		mergeButton.setOnAction(e -> mergeHeap());
 		// Create grid pane for layout
 		GridPane gridPane = new GridPane();
 		gridPane.setHgap(20);
@@ -73,10 +73,10 @@ public class GUI extends Application {
 		gridPane.add(newValueField, 1, 1);
 		gridPane.add(insertButton, 0, 2);
 		gridPane.add(deleteButton, 0, 3);
-//		gridPane.add(decreaseButton, 0, 3);
 		gridPane.add(visualizeButton, 1, 2);
 		gridPane.add(findButton, 1, 3);
 		gridPane.add(findMinButton, 0, 4);
+		gridPane.add(mergeButton, 1, 4);
 
 		// Create a VBox for the result label
 		VBox vbox = new VBox(20);
@@ -95,6 +95,30 @@ public class GUI extends Application {
 
 	}
 
+	private void mergeHeap() {
+
+		try {
+			if (bnh.empty()) {
+				JOptionPane.showMessageDialog(null, "Main heap is empty.");
+				return;
+			}
+			BNH bnh2 = new BNH();
+			List<Integer> values = parseValues(JOptionPane.showInputDialog("Input another heap."));
+			for (int value : values) {
+				if (value < 0) {
+					return;
+				}
+				bnh2.insert(value);
+			}
+			BNH output = BNH.merge(bnh, bnh2);
+			JOptionPane.showMessageDialog(null, output.visualize());
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			showError("Invalid input format. Please enter a non-negative integer value.");
+		}
+	}
+
 	private void insertNode() {
 		try {
 			String inputValues = valueField.getText();
@@ -102,7 +126,7 @@ public class GUI extends Application {
 
 			// Call the insert method of BNH class
 			for (int value : values) {
-				if (value <0) {
+				if (value < 0) {
 					return;
 				}
 				bnh.insert(value);
@@ -143,9 +167,9 @@ public class GUI extends Application {
 
 	private void findNode() {
 		try {
-			
+
 			int value = Integer.parseInt(valueField.getText());
-			if (value<0) {
+			if (value < 0) {
 				return;
 			}
 			// Call the findNodeWithValue method of BNH class
@@ -168,7 +192,7 @@ public class GUI extends Application {
 			resultLabel.setText("Min found: " + valueFound);
 		} catch (Exception e) {
 			// TODO: handle exception
-			
+
 			showError("Invalid input format. Please enter a non-negative integer value.");
 		}
 	}
