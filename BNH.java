@@ -1,7 +1,6 @@
-package version2;
+package version2withGUI;
 
 public class BNH {
-	private static int COUNT=10;
 	/**
 	 * Size of an empty heap
 	 */
@@ -100,6 +99,9 @@ public class BNH {
 	 * Time complexity: O(logn) w.c., O(1) amortized
 	 */
 	public void insert(int value) {
+		if (value < 0) {
+			return;
+		}
 		BNH heapToMeld;
 		HeapNode newHeapNode = new HeapNode(value);
 
@@ -112,6 +114,22 @@ public class BNH {
 		} else { // use meld to add element to heap
 			heapToMeld = new BNH(newHeapNode);
 			this.meld(heapToMeld);
+			this.fixProperties();
+		}
+	}
+
+	/**
+	 * public int findMin()
+	 * 
+	 * Return the minimum value
+	 * 
+	 * Time complexity: O(1)
+	 */
+	public int findMin() {
+		if (empty()) {
+			return EMPTY_MIN_VALUE; // nothing to find
+		} else {
+			return this.min.getValue();
 		}
 	}
 
@@ -154,20 +172,29 @@ public class BNH {
 		this.meld(h);
 	}
 
-	/**
-	 * public int findMin()
-	 * 
-	 * Return the minimum value
-	 * 
-	 * Time complexity: O(1)
-	 */
-	public int findMin() {
-		if (empty()) {
-			return EMPTY_MIN_VALUE; // nothing to find
-		} else {
-			return this.min.getValue();
-		}
-	}
+//	public boolean decreaseValue(HeapNode node, int newValue) {
+//		if (newValue > node.getValue() || this.empty()) {
+//			return false;
+//		}
+//
+//		node.setValue(newValue);
+//		this.fixProperties();
+//		HeapNode currentNode = node;
+//		HeapNode parentNode = currentNode.getPrev();
+//
+//		while (parentNode != null && currentNode.getValue() < parentNode.getValue()) {
+//			// Swap the values of the current node and its parent
+//			int temp = currentNode.getValue();
+//			currentNode.setValue(parentNode.getValue());
+//			parentNode.setValue(temp);
+//
+//			// Move up to the parent node
+//			currentNode = parentNode;
+//			parentNode = currentNode.getPrev();
+//		}
+//
+//		return true;
+//	}
 
 	/**
 	 * public void meld (BinomialHeap heap2)
@@ -332,6 +359,96 @@ public class BNH {
 		this.size += tree.getSize();
 	}
 
+	public String visualize() {
+		if (empty()) {
+			return "Empty tree";
+		}
+
+		StringBuilder visualization = new StringBuilder();
+		HeapNode pointer = this.first;
+		while (pointer != null) {
+			visualizeNode(pointer, 5, visualization);
+			pointer = pointer.getNext();
+		}
+
+		return visualization.toString();
+	}
+
+	private void visualizeNode(HeapNode node, int depth, StringBuilder visualization) {
+		if (node == null) {
+			return;
+		}
+		for (int i = 0; i < depth; i++) {
+			visualization.append(" ");
+		}
+
+		visualization.append(node.getValue()).append("\n");
+
+		HeapNode child = node.getLeftmostChild();
+		while (child != null) {
+			visualizeNode(child, depth + 5, visualization);
+			child = child.getNext();
+		}
+	}
+
+	/**
+	 * Finds a node with the given value in the binomial heap.
+	 *
+	 * @param value The value to search for
+	 * @return The node with the given value, or null if not found
+	 */
+	public HeapNode findNodeWithValue(int value) {
+		if (empty()) {
+			return null;
+		}
+
+		// Iterate through each root tree in the binomial heap
+		HeapNode pointer = this.first;
+		while (pointer != null) {
+			// Recursively search for the node with the given value in the root tree
+			HeapNode result = findNodeWithValueInTree(pointer, value);
+			if (result != null) {
+				return result;
+			}
+
+			pointer = pointer.getNext();
+		}
+
+		// Node with the given value not found
+		return null;
+	}
+
+	/**
+	 * Recursively searches for a node with the given value in the root tree.
+	 *
+	 * @param node  The current node to search
+	 * @param value The value to search for
+	 * @return The node with the given value, or null if not found
+	 */
+	private HeapNode findNodeWithValueInTree(HeapNode node, int value) {
+		if (node == null) {
+			return null;
+		}
+
+		if (node.getValue() == value) {
+			return node;
+		}
+
+		// Recursively search in each child tree
+		HeapNode child = node.getLeftmostChild();
+		while (child != null) {
+			HeapNode result = findNodeWithValueInTree(child, value);
+			if (result != null) {
+				return result;
+			}
+
+			child = child.getNext();
+		}
+
+		// Node with the given value not found in this tree
+		return null;
+	}
+
 	/**
 	 * Returns the pointer to the first binomial tree in the heap.
 	 * 
@@ -421,6 +538,7 @@ public class BNH {
 	 * 
 	 * Time complexity: O(n)
 	 */
+	//
 	public boolean isValid() {
 		if (empty()) {
 			return true; // an empty tree is a valid tree
@@ -656,10 +774,8 @@ public class BNH {
 		 * 
 		 * @param value new value
 		 */
-		public void setValue(int value) {
-			if (value >= 0) {
-				this.value = value;
-			}
+		public void setValue(Integer value) {
+			this.value = value;
 		}
 
 		/**
@@ -747,6 +863,7 @@ public class BNH {
 
 	/**
 	 * Simple data structure representing a tree's actual size and rank properties.
+	 * 
 	 */
 	private class ValidatedInfo {
 		public int size;
@@ -757,131 +874,4 @@ public class BNH {
 			this.rank = rank;
 		}
 	}
-
-	/**
-	 * Visualizes the binomial tree by printing it out in the console.
-	 */
-	public String visualize() {
-		if (empty()) {
-			return "Empty tree";
-		}
-
-		StringBuilder visualization = new StringBuilder();
-		HeapNode pointer = this.first;
-		while (pointer != null) {
-			visualizeNode(pointer, 5, visualization);
-			pointer = pointer.getNext();
-		}
-
-		return visualization.toString();
-	}
-
-	/**
-	 * Helper method to recursively visualize each node in the tree.
-	 *
-	 * @param node  Current node to visualize
-	 * @param depth Depth of the current node in the tree
-	 */
-	private void visualizeNode(HeapNode node, int space, StringBuilder visualization) {
-		if (node == null) {
-			return;
-		}
-		space += COUNT;
-		visualizeNode(node.leftmostChild, space, visualization);
-		visualization.append("\n");
-		for (int i = COUNT; i < space; i++) {
-			visualization.append(" ");
-		}
-
-		visualization.append(node.getValue()).append("\n");
-
-		HeapNode child = node.getLeftmostChild();
-		if (child != null) {
-			for (int i = 1; i <= node.getRank() - 1; i++) {
-				visualizeNode(child.getNext(), space, visualization);
-			}
-		}
-	}
-
-	/**
-	 * Finds a node with the given value in the binomial heap.
-	 *
-	 * @param value The value to search for
-	 * @return The node with the given value, or null if not found
-	 */
-	public HeapNode findNodeWithValue(int value) {
-		if (empty()) {
-			return null;
-		}
-
-		// Iterate through each root tree in the binomial heap
-		HeapNode pointer = this.first;
-		while (pointer != null) {
-			// Recursively search for the node with the given value in the root tree
-			HeapNode result = findNodeWithValueInTree(pointer, value);
-			if (result != null) {
-				return result;
-			}
-
-			pointer = pointer.getNext();
-		}
-
-		// Node with the given value not found
-		return null;
-	}
-
-	/**
-	 * Recursively searches for a node with the given value in the root tree.
-	 *
-	 * @param node  The current node to search
-	 * @param value The value to search for
-	 * @return The node with the given value, or null if not found
-	 */
-	private HeapNode findNodeWithValueInTree(HeapNode node, int value) {
-		if (node == null) {
-			return null;
-		}
-
-		if (node.getValue() == value) {
-			return node;
-		}
-
-		// Recursively search in each child tree
-		HeapNode child = node.getLeftmostChild();
-		while (child != null) {
-			HeapNode result = findNodeWithValueInTree(child, value);
-			if (result != null) {
-				return result;
-			}
-
-			child = child.getNext();
-		}
-
-		// Node with the given value not found in this tree
-		return null;
-	}
-
-	public boolean decreaseValue(HeapNode node, int newValue) {
-		if (newValue > node.getValue() || this.empty()) {
-			return false;
-		}
-
-		node.setValue(newValue);
-
-		HeapNode currentNode = node;
-		HeapNode parentNode = currentNode.getPrev();
-
-		while (parentNode != null && currentNode.getValue() < parentNode.getValue()) {
-			// Swap the values of the current node and its parent
-			int temp = currentNode.getValue();
-			currentNode.setValue(parentNode.getValue());
-			parentNode.setValue(temp);
-
-			// Move up to the parent node
-			currentNode = parentNode;
-			parentNode = currentNode.getPrev();
-		}
-		return true;
-	}
-
 }
