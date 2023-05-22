@@ -1,6 +1,10 @@
 package version2withGUI;
 
 public class BNH {
+	/*
+	 * Constant distance between node while visualize
+	 */
+	private static int COUNT = 10;
 	/**
 	 * Size of an empty heap
 	 */
@@ -374,20 +378,22 @@ public class BNH {
 		return visualization.toString();
 	}
 
-	private void visualizeNode(HeapNode node, int depth, StringBuilder visualization) {
+	private void visualizeNode(HeapNode node, int space, StringBuilder visualization) {
 		if (node == null) {
 			return;
 		}
-		for (int i = 0; i < depth; i++) {
+		space += COUNT;
+		visualizeNode(node.leftmostChild, space, visualization);
+		visualization.append('\n');
+		for (int i = COUNT; i < space; i++)
 			visualization.append(" ");
-		}
-
-		visualization.append(node.getValue()).append("\n");
-
-		HeapNode child = node.getLeftmostChild();
-		while (child != null) {
-			visualizeNode(child, depth + 5, visualization);
-			child = child.getNext();
+		visualization.append(node.getValue());
+		HeapNode x = node.leftmostChild;
+		if (x != null) {
+			for (int i = 1; i <= node.getRank() - 1; i++) {
+				visualizeNode(x.getNext(), space, visualization);
+				x = x.getNext();
+			}
 		}
 	}
 
